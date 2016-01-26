@@ -1,0 +1,81 @@
+
+hs_common.h:Hyperscan的普通的API
+1.typedef hs_database_t:A Hyperscan pattern database.
+	可以被hs_compile()、hs_compile_multi()、hs_compile_ext_multi()函数生成
+2.typedef (* hs_alloc_t)(size_t size)：在运行是可以根据需求来分配更多的代码，在多线程等并发环境下，需要对地址分配操作是可重入的。
+3.typedef (* hs_free_t)(void *ptr)：释放由hs_alloc_t所分配的地址空间
+4.hs_error_t hs_free_database(hs_database_t * db)：释放一个已编译的pattern database
+5.hs_error_t hs_serialize_database(const hs_database_t * db, char ** bytes, size_t * length)：将一个pattern database序列化为一个字节流
+6.hs_error_t hs_stream_size(const hs_database_t * database, size_t * stream_size)：提供在给定database下一个单独的流所分配的连状态的打小
+7.hs_error_t hs_database_size(const hs_database_t * database, size_t * database_size)：提供database的字节数，由序列化版本
+8.hs_error_t hs_database_info(const hs_database_t * database, char ** info)：提供database的信息，有序列化版本
+9.hs_error_t hs_set_allocator(hs_alloc_t alloc_func, hs_free_t free_func):设置hyperscan的存储分配和释放函数， hs_set_stream_allocator(), hs_set_scratch_allocator(), hs_set_database_allocator() and hs_set_misc_allocator()；
+10.const char* hs_version(void)：查看系统版本
+
+hs_compile.h:Hyperscan编译API
+1.hs_error_t hs_compile(const char * expression, unsigned int flags, unsigned int mode, const hs_platform_info_t * platform, hs_database_t ** db, hs_compile_error_t ** error)：
+	基本的正则表达式编译函数，由expression转换成db，在运行时被hs_scan()、hs_open_stream()等使用
+2.hs_error_t hs_compile_multi(const char *const * expressions, const unsigned int * flags, const unsigned int * ids, unsigned int elements, unsigned int mode, const hs_platform_info_t * platform, hs_database_t ** db, hs_compile_error_t ** error):
+	多正则表达式编译函数,每一个表达式都可以使用一个整数进行标记,这样可以区分是匹配到了哪一个表达式;
+3.hs_error_t hs_compile_ext_multi(const char *const * expressions, const unsigned int * flags, const unsigned int * ids, const hs_expr_ext_t *const * ext, unsigned int elements, unsigned int mode, const hs_platform_info_t * platform, hs_database_t ** db, hs_compile_error_t ** error):
+	多正则表达式编译函数,与上一个不同的是,可以通过一个hs_expr_ext_t结构体对每一个正则表达式指定特殊的行为;
+4.hs_error_t hs_free_compile_error(hs_compile_error_t * error):释放由1,2,3函数生成的错误结构体;
+5.hs_error_t hs_expression_info(const char * expression, unsigned int flags, hs_expr_info_t ** info, hs_compile_error_t ** error):提供正则表达式的hs_expr_info_t信息;
+6.hs_error_t hs_populate_platform(hs_platform_info_t * platform):填充当前主机的平台信息
+
+hs_runtime.h:Hyperscan的运行时API
+1.hs_error_t hs_open_stream(const hs_database_t * db, unsigned int flags, hs_stream_t ** stream):打开并初始化一个流;
+2.hs_error_t hs_scan_stream(hs_stream_t * id, const char * data, unsigned int length, unsigned int flags, hs_scratch_t * scratch, match_event_handler onEvent, void * ctxt):将需要scan的数据写入到一个打开的流,匹配将会通过match_evetn_handler回调函数提供;
+3.hs_error_t hs_close_stream(hs_stream_t * id, hs_scratch_t * scratch, match_event_handler onEvent, void * ctxt):关闭一个hs_stream_t流
+4.hs_error_t hs_reset_stream(hs_stream_t * id, unsigned int flags, hs_scratch_t * scratch, match_event_handler onEvent, void * context):将一个流重设为初始状态
+5.hs_error_t hs_copy_stream(hs_stream_t ** to_id, const hs_stream_t * from_id):复制一个流,新的流和源流拥有相同的状态,包括相同的偏移量
+6.hs_error_t hs_reset_and_copy_stream(hs_stream_t * to_id, const hs_stream_t * from_id, hs_scratch_t * scratch, match_event_handler onEvent, void * context):新的流将会被重新设置
+7.hs_error_t hs_scan(const hs_database_t * db, const char * data, unsigned int length, unsigned int flags, hs_scratch_t * scratch, match_event_handler onEvent, void * context):块(block)正则表达式scan函数,主要是区别与流型
+8.hs_error_t hs_scan_vector(const hs_database_t * db, const char *const * data, const unsigned int * length, unsigned int count, unsigned int flags, hs_scratch_t * scratch, match_event_handler onEvent, void * context):向量正则表达式三餐函数
+9.hs_error_t hs_alloc_scratch(const hs_database_t * db, hs_scratch_t ** scratch):为Hyperscan分配一个住区空间,每个线程需要一个抓取空间
+10.hs_error_t hs_clone_scratch(const hs_scratch_t * src, hs_scratch_t ** dest):克隆一个抓去空间并为其分配地址
+11.hs_error_t hs_scratch_size(const hs_scratch_t * scratch, size_t * scratch_size):提供给定的scratch的存储空间的大小
+12.hs_error_t hs_free_scratch(hs_scratch_t * scratch):释放scratch空间
+
+结构体:
+struct hs_comil
+
+
+Start of Match:
+	在标准的操作中,Hyperscan在回调发生时只提供结束偏移量,如果设置了HS_FLAG_SOM_LEFTMOST编译选项,返回时会含有最左边的匹配位置,但开启这个功能会降低性能并在stream模式中加剧stream state的消耗.
+	
+Supported  Constructs:
+	HyperScan支持的这则结构:
+		1.文本字符,字符串,libpcre引用和转义字符
+		2.字符集例如.(dot)、[abc]和[^abc]，以及预定义的字符集\s、\d、\w、\v、\h，以及其反义\S、\D、\W、\V、\H.
+		3.POSIX命名字符集[[:xxx:]]以及[[:^xxx:]]
+		4.统一编码字符属性例如\p{L},\P{Sc},\p{Greek}.
+		5.量词：
+			(1)？，*，+是支持的
+			(2)范围量词（{n},{m,n},{n,}）是支持的，但有一些限制
+		6.括号分组：包括命名和无命名捕获，
+		7.选择：|
+		8.选项：
+			大小写敏感：(?i)和（？-i）
+			多行：(?m)和(?-m)
+			Dot-all：(?s)和（？-s）
+		9.支持\b,\B边界断言
+		10.支持（？# comment）语法
+		11.在pattern的开头使用（*UTF8）或(*UCP)控制谓语，启用UTF-8和UCP模式
+	Hyperscan不支持的结构：
+		1.后向索引和捕获子表达式
+		2.任意0宽度断言
+		3.子例程索引和递归类型
+		4.条件类型
+		5.Backtracking control verbs
+		6.\C，单字节侦测
+		7.\R,新行匹配
+		8.The \K start of match reset directive
+		9.Callouts and embedded code.
+		10.Atomic grouping and possessive quantifiers。
+	
+语义（Semantics）：
+	
+		
+	
+	

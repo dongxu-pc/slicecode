@@ -1,0 +1,12 @@
+文件:
+sp_pcre.h
+sp_pcre.c
+plugin_enum.h
+plugbase.h
+plugbase.c
+结构体:
+
+函数调用关系:
+void SetupPcre(void)<sp_pcre.h>----void RegisterRuleOption(stroptname,func,optiontype)<plugbase.c>---struct RuleOptConfigFuncNode->func
+---->void SnortPcreInit(struct _SnortConfig *sc, char *data, OptTreeNode *otn, int protocol)<sp_pcre.c>
+---->

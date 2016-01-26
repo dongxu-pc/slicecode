@@ -1,0 +1,20 @@
+Pcre提供19个接口函数,其是一个NFA正则引擎,同时也实现了DFA
+	1.pcre *pcre_compile();将一个正则表达式编译成一个内部表示,在匹配多个字符串时可以加速匹配;
+	2.pcre *pcre_compile2();与上一个函数的意义相同,只是多了一个参数
+	3.int pcre_config():查询当前pcre版本中使用的选项信息
+	4.int pcre_copy_named_substring():根据名字获取的字符串
+	5.int pcre_copy_substring():根据编号获取的字符串;
+	6.int pcre_dfa_exec():使用编译好的模式进行匹配,采用一种非传统的方法DFA,只是对匹配的字符串扫描一次
+	7.int pcre_exec():使用编译好的模式进行匹配,采用与perl相似的算法,返回匹配字符串的偏移位置;
+	8.int pcre_get_named_substring():根据编号获取捕获的字串;
+	9.int pcre_get_substring():获取匹配的子串;
+	10.void pcre_free_substring():释放pcre_get_substring()和pcre_get_named_substring()申请的内存空间;
+	11.int pcre_get_substring_list():获取匹配的所有子串;
+	12.void pcre_free_substring_list():释放由pcre_get_substring_list申请的内存空间
+	13.int pcre_fullinfo():返回编译出来的模式的信息;
+	14.int pcre_info():已过时,由pcre_fullinfo()代替
+	15.int pcre_get_stringnumber():根据命名捕获的名字获取对应的编号;
+	16.const unsigned char *pcre_maketables():生成一个字符表，表中每一个元素的值不大于256，可以用它传给pcre_compile()替换掉内建的字符表;
+	17.int pcre_refcount():编译模式的引用计数;
+	18.pcre_extra *pcre_study():对编译的模式进行学习，提取可以加速匹配过程的信息;
+	19.char *pcre_version():返回PCRE的版本信息.
