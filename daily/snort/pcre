@@ -1,7 +1,12 @@
 文件:
+snort.h
 sp_pcre.h
 sp_pcre.c
 plugin_enum.h
+detection_options.h
+detection_options.c
+sf_snort_plugin_api.h
+
 plugbase.h
 plugbase.c
 结构体:
@@ -18,4 +23,8 @@ void SetupPcre(void)<sp_pcre.h>----void RegisterRuleOption(stroptname,func,optio
 	2.在第222行添加SetupHyperscan();
   plugin_enmu.h:
   	1.在第71行添加PLUGIN_HYPERSCAN
-	
+
+添加文件：
+  sp_hyperscan.h:
+  sp_hyperscan.c
+

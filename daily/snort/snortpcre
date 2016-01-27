@@ -1,0 +1,64 @@
+3.5.26 pcre
+
+The pcre keyword allows rules to be written using 
+perl compatible regular expressions. 
+For more detail on what can be done via a pcre regular expression, check out the PCRE web site http://www.pcre.org
+
+3.5.26.1 Format
+
+    pcre:[!]"(/<regex>/|m<delim><regex><delim>)[ismxAEGRUBPHMCOIDKYS]";
+The post-re modifiers set compile time flags for the regular expression. 
+See tables [*], [*], and [*] for descriptions of each modifier.
+
+
+Table: Perl compatible modifiers for pcre
+i	case insensitive
+s	include newlines in the dot metacharacter
+m	
+By default, the string is treated as one big line of characters. ^ and $ match at the beginning and ending of the string. When m is set, ^ and $ match immediately following or immediately before any newline in the buffer, as well as the very start and very end of the buffer.
+
+x	
+whitespace data characters in the pattern are ignored except when escaped or inside a character class
+
+
+
+Table: PCRE compatible modifiers for pcre
+A	
+the pattern must match only at the start of the buffer (same as ^ )
+
+E	
+Set $ to match only at the end of the subject string. Without E, $ also matches immediately before the final character if it is a newline (but not before any other newlines).
+
+G	
+Inverts the "greediness" of the quantifiers so that they are not greedy by default, but become greedy if followed by "?".
+
+
+
+Table: Snort specific modifiers for pcre
+R	Match relative to the end of the last pattern match. (Similar to distance:0;)
+U	Match the decoded URI buffers (Similar to uricontent and http_uri). This modifier is not allowed with the unnormalized HTTP request uri buffer modifier(I) for the same content.
+I	Match the unnormalized HTTP request uri buffer (Similar to http_raw_uri). This modifier is not allowed with the HTTP request uri buffer modifier(U) for the same content.
+P	Match unnormalized HTTP request body (Similar to http_client_body).
+ 	For SIP message, match SIP body for request or response (Similar to sip_body).
+H	Match normalized HTTP request or HTTP response header (Similar to http_header). This modifier is not allowed with the unnormalized HTTP request or HTTP response header modifier(D) for the same content.
+ 	For SIP message, match SIP header for request or response (Similar to sip_header).
+D	Match unnormalized HTTP request or HTTP response header (Similar to http_raw_header). This modifier is not allowed with the normalized HTTP request or HTTP response header modifier(H) for the same content.
+M	Match normalized HTTP request method (Similar to http_method)
+C	Match normalized HTTP request or HTTP response cookie (Similar to http_cookie). This modifier is not allowed with the unnormalized HTTP request or HTTP response cookie modifier(K) for the same content.
+K	Match unnormalized HTTP request or HTTP response cookie (Similar to http_raw_cookie). This modifier is not allowed with the normalized HTTP request or HTTP response cookie modifier(C) for the same content.
+S	Match HTTP response status code (Similar to http_stat_code)
+Y	Match HTTP response status message (Similar to http_stat_msg)
+B	Do not use the decoded buffers (Similar to rawbytes)
+O	Override the configured pcre match limit and pcre match limit recursion for this expression (See section [*]). It completely ignores the limits while evaluating the pcre pattern specified.
+
+Note:   The modifiers R (relative) and B (rawbytes) are not allowed with any of the HTTP modifiers such as U, I, P, H, D, M, C, K, S and Y.
+
+3.5.26.2 Example
+
+This example performs a case-insensitive search for the HTTP URI foo.php?id=<some numbers>
+
+    alert tcp any any -> any 80 (content:"/foo.php?id="; pcre:"/\/foo.php?id=[0-9]{1,10}/iU";)
+Note:   It is wise to have at least one content keyword in a rule that uses pcre. This allows the fast-pattern matcher to filter out non-matching packets so that the pcre evaluation is not performed on each and every packet coming across the wire.
+
+Note:  
+Snort's handling of multiple URIs with PCRE does not work as expected. PCRE when used without a uricontent only evaluates the first URI. In order to use pcre to inspect all URIs, you must use either a content or a uricontent.
