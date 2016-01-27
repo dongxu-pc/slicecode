@@ -68,6 +68,8 @@ int PcreAdjustRelativeOffsets(PcreData *pcre, uint32_t search_offset);
 void PcreCheckAnchored(PcreData *);
 
 #endif /* __SNORT_PCRE_H__ */
+
+
 5. 使用PCRE在C语言中实现正则表达式的解析
 上述讲了这么多PCRE相关函数的介绍，目的还是为了能够运用上，所以这里就先讲解下使用PCRE的过程。主要过程分三步走第一步编译正则表达式；第二匹配正则表达式；第三步释放正则表达式。
 1．编译正则表达式

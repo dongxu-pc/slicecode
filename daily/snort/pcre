@@ -10,3 +10,12 @@ plugbase.c
 void SetupPcre(void)<sp_pcre.h>----void RegisterRuleOption(stroptname,func,optiontype)<plugbase.c>---struct RuleOptConfigFuncNode->func
 ---->void SnortPcreInit(struct _SnortConfig *sc, char *data, OptTreeNode *otn, int protocol)<sp_pcre.c>
 ---->
+
+
+编程路程：
+  plugbase.c：
+  	1.在第100行添加#include "detection-plugins/sp_hyperscan.h"
+	2.在第222行添加SetupHyperscan();
+  plugin_enmu.h:
+  	1.在第71行添加PLUGIN_HYPERSCAN
+	
