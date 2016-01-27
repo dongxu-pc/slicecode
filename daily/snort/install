@@ -1,0 +1,7 @@
+安装daq：
+sudo apt-get install bison flex
+安装snort：
+sudo apt-get install libpcre3 libpcre3-dev
+sudo apt-get install zlib1g zlib1g-dev
+wget http://prdownloads.sourceforge.net/libdnet/libdnet-1.11.tar.gz
+

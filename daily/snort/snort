@@ -1,0 +1,37 @@
+
+
+选项：
+	-v: 在屏幕上显示抓取的结果
+	-i: 选择网卡
+	-l：抓取数据log
+	-c 文件：过滤数据的规则
+	
+snort规则：
+	snort在版本1.8之后允许一条规则出现再多行，只需要在换行时使用‘\’即可；
+	一条snort规则可以分为两个逻辑部分，分别是rule header和rule options；
+	rule header：包含规则的action, protocol, src&des IP addresses，src&des port,netmasks;
+	rule option：包含警告消息和侦测到数据报部分数据那个行为应该执行的信息
+	eg:alert tcp any any -> 192.168.0.1/24 111 \
+		(content:"00 01 86 a5";msg:"mountd access";)
+		这个一个简单的snort规则，在小括号前的是rule header，括号中的是rule option，选项语句由option keyword ： “message”；构成
+	rule header：<rule action> <protocols> <IP address> <port numbers> <The Direction Operator> <Activate/Dynamic Rules>
+	rule action：
+		1.alert - generate an alert using the selected alert method, and then log the packet
+		2.log - log the packet
+		3.pass - ignore the packet
+		4.activate - alert and then turn on another dynamic rule
+		5.dynamic - remain idle until activated by an activate rule , then act as a log rule
+		6.drop - block and log the packet
+		7.reject - block the packet, log it, and then send a TCP reset if the protocol is TCP or an ICMP port unreachable message if the protocol is UDP.
+		8.sdrop - block the packet but do not log it.
+	Protocols:现支持TCP, UDP, ICMP, and IP，今后会支持ARP, IGRP, GRE, OSPF, RIP, IPX, etc.
+	IP Address：分为Ip和掩码两部分，
+		使用关键字any可以用来匹配任意的ip；
+		使用！来表示‘非’用来排除某些ip区间，形如！ip;
+		可以通过ip数组来表示多个ip区间，形如[ip1,ip2]；
+	Port numbers:指明端口号
+		可以使用any；
+		可以使用！；
+		使用‘:’表示范围，形如1024:2048,缺省的1024:和:512是被允许的；
+	Direction Operator：方向运算符,有->、<-、<>三种。
+		
