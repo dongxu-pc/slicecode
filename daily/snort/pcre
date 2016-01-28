@@ -28,3 +28,7 @@ void SetupPcre(void)<sp_pcre.h>----void RegisterRuleOption(stroptname,func,optio
   sp_hyperscan.h:
   sp_hyperscan.c
 
+修改文件sp_hyperscan.c
+  void SnortHyperscanParse():对选项hyperscan的正则表达式进行处理使之合乎规范，主要是去除空格和引号
+  
+
