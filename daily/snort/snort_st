@@ -1,0 +1,9 @@
+
+typedef struct _PreprocStats
+{
+	uint64_t ticks,ticks_start;
+	uint64_t checks;
+	uint64_t exits;
+} PreprocStats;
+
+typedef void(*FreeFunc)(PreprocStats *stats);

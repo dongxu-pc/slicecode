@@ -1,0 +1,6 @@
+ arp-scan -i eth0 -l
+ arp-scan --help
+ ip addr
+ sudo arp-scan eth0 -l
+ sudo ifconfig eth0 219.219.216.241 netmask 255.255.255.0
+ sudo route add default gw 219.219.216.254

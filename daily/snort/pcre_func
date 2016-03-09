@@ -18,3 +18,6 @@ Pcre提供19个接口函数,其是一个NFA正则引擎,同时也实现了DFA
 	17.int pcre_refcount():编译模式的引用计数;
 	18.pcre_extra *pcre_study():对编译的模式进行学习，提取可以加速匹配过程的信息;
 	19.char *pcre_version():返回PCRE的版本信息.
+	
+	snortPcre:
+		HTTP_BUFS

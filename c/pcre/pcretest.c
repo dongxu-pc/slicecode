@@ -9,16 +9,17 @@
 int main()
 {
     pcre  *re;
+	pcre_extra *pe;
     const char *error;
     int  erroffset;
     int  ovector[OVECCOUNT];
-    int  rc, i;
-    char  src [] = "111 <title>Hello World</title> 222";   // 要被用来匹配的字符串
-    char  pattern [] = "<title>(.*)</(tit)le>";              // 将要被编译的字符串形式的正则表达式
+    int  rc, i,options;
+    char  src [] = "111 <title>Hello the  World</title> 222";   // 要被用来匹配的字符串
+    char  pattern [] = "(t|H)h(o|eir|ose)";              // 将要被编译的字符串形式的正则表达式
     printf("String : %s\n", src);
     printf("Pattern: \"%s\"\n", pattern);
     re = pcre_compile(pattern,       // pattern, 输入参数，将要被编译的字符串形式的正则表达式
-                      0,            // options, 输入参数，用来指定编译时的一些选项
+                      0,//PCRE_ANCHORED,            // options, 输入参数，用来指定编译时的一些选项
                       &error,       // errptr, 输出参数，用来输出错误信息
                       &erroffset,   // erroffset, 输出参数，pattern中出错位置的偏移量
                       NULL);        // tableptr, 输入参数，用来指定字符表，一般情况用NULL
@@ -27,6 +28,15 @@ int main()
         printf("PCRE compilation failed at offset %d: %s\n", erroffset, error);
         return 1;
     }
+
+	pe = pcre_study(re,0,&error);
+
+	rc = pcre_fullinfo(re,pe,PCRE_INFO_CAPTURECOUNT,(void*)&options);
+	if(options & PCRE_ANCHORED){
+		printf("pcre anchored!\n");
+	}
+	printf("option is %d\n",options);
+
     rc = pcre_exec(re,            // code, 输入参数，用pcre_compile编译好的正则表达结构的指针
                    NULL,          // extra, 输入参数，用来向pcre_exec传一些额外的数据信息的结构的指针
                    src,           // subject, 输入参数，要被用来匹配的字符串

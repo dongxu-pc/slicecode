@@ -9,20 +9,31 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <hs/hs.h>
+#include <hs.h>
 
 static int eventHandler(unsigned int id,unsigned long long from,
 		unsigned long long to, unsigned int flags,void *ctx)
 {
-	printf("Match for pattern \"%s\"  from %llu to %llu:\n",(char *)ctx,from,to);
+	printf("Match(%u) for pattern  from %llu to %llu:\n",id,from,to);
 	return 0;
 }
 
 int main()
 {
 	int orroffset;
-	int ovector[30];
+//	int ovector[30];
 	int rc,i;
+
+	char *src;
+
+	FILE *fp;
+	fp = fopen("1.log","r");
+	fseek( fp , 0 , SEEK_END );
+	int file_size;
+	file_size = ftell( fp );
+	fseek( fp , 0 , SEEK_SET);
+	src =  (char *)malloc( file_size * sizeof( char ) );
+	fread( src , file_size , sizeof(char) , fp);
 
 	hs_database_t *database;
 	hs_scratch_t *scratch = NULL;
@@ -30,14 +41,15 @@ int main()
 	hs_error_t hs_err;
 	
 
-	char buf[128];
-	memset(buf,'\0',128);
-	char src[] = "<head><title>Hello World!</title>hshhs<title></title></head>";
-	char pattern[] = "<title>(.*)</title>";
+//	char buf[128];
+//	memset(buf,'\0',128);
+//	char src[] = "<head><title>Hello World!</title>hshhs<title></title></head>";
+	//char pattern[] = "<title>(.*)</title>";
+	char pattern[] = "\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+";
 	//char pattern[] = "[hw]";
-	hs_err = hs_compile(pattern,HS_FLAG_DOTALL|HS_FLAG_SOM_LEFTMOST,HS_MODE_BLOCK,NULL,&database,&compile_err);
+	hs_err = hs_compile(pattern,HS_FLAG_CASELESS|HS_FLAG_MULTILINE|HS_FLAG_DOTALL,HS_MODE_BLOCK,NULL,&database,&compile_err);
 	if(hs_err != HS_SUCCESS){
-		printf("ERROR: Unable to compile pattern \"%s\":%s\n",pattern,compile_err->message);
+	//	printf("ERROR: Unable to compile pattern \"%s\":%s\n",pattern,compile_err->message);
 		hs_free_compile_error(compile_err);
 		return -1;
 	}
@@ -48,7 +60,7 @@ int main()
 		hs_free_database(database);
 		return -1;
 	}
-	printf("src is %s\n",src);
+	//printf("src is %s\n",src);
 	hs_err = hs_scan(database,src,strlen(src),0,scratch,eventHandler,pattern);
 	if(hs_err != HS_SUCCESS){
 		printf("ERROR: Unable to scan src.Exiting.\n");
@@ -56,6 +68,8 @@ int main()
 		hs_free_database(database);
 		return -1;
 	}
+
+	fclose(fp);
 
 	hs_free_scratch(scratch);
 	hs_free_database(database);

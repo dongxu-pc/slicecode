@@ -1,0 +1,47 @@
+文件:
+snort.h
+sp_pcre.h
+sp_pcre.c
+plugin_enum.h
+detection_options.h
+detection_options.c
+sf_snort_plugin_api.h
+
+plugbase.h
+plugbase.c
+结构体:
+
+函数调用关系:
+void SetupPcre(void)<sp_pcre.h>----void RegisterRuleOption(stroptname,func,optiontype)<plugbase.c>---struct RuleOptConfigFuncNode->func
+---->void SnortPcreInit(struct _SnortConfig *sc, char *data, OptTreeNode *otn, int protocol)<sp_pcre.c>
+---->
+
+
+编程路程：
+  plugbase.c：
+  	1.在第100行添加#include "detection-plugins/sp_hyperscan.h"
+	2.在第222行添加SetupHyperscan();
+  plugin_enmu.h:
+  	1.在第71行添加PLUGIN_HYPERSCAN
+  treenodes.h:
+    1.在第127行添加啊了int hyperscan_flag
+  rule_option_type_t.h:
+	1.在第55行加入了RULE_OPTION_TYPE_HYPERSCAN
+
+添加文件：
+  sp_hyperscan.h:
+  sp_hyperscan.c
+
+修改文件sp_hyperscan.c
+  void SnortHyperscanParse():对选项hyperscan的正则表达式进行处理使之合乎规范，主要是去除空格和引号
+
+@eslab:~/tmp/snort$ cp ~/tmp/snort-2.9.8.0/src/detection-plugins/sp_hyperscan.* src/detection-plugins/
+es@eslab:~/tmp/snort$ cp ~/tmp/snort-2.9.8.0/src/detection-plugins/Makefile.in src/detection-plugins/
+es@eslab:~/tmp/snort$ cp ~/tmp/snort-2.9.8.0/src/detection-plugins/sp_pattern_match.c src/detection-plugins/
+es@eslab:~/tmp/snort$ cp ~/tmp/snort-2.9.8.0/src/detection-plugins/Makefile.am src/detection-plugins/
+es@eslab:~/tmp/snort$ cp ~/tmp/snort-2.9.8.0/src/detection-plugins/detection_options.c src/detection-plugins/
+es@eslab:~/tmp/snort$ cp ~/tmp/snort-2.9.8.0/src/plugbase.c src/
+es@eslab:~/tmp/snort$ cp ~/tmp/snort-2.9.8.0/src/treenodes.h src/
+es@eslab:~/tmp/snort$ cp ~/tmp/snort-2.9.8.0/src/plugin_enum.h src/
+es@eslab:~/tmp/snort$ cp ~/tmp/snort-2.9.8.0/src/rule_option_types.h src/
+
