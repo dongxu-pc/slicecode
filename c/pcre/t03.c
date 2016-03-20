@@ -15,30 +15,30 @@ int main()
 	pcre *re;
 	const char* error;
 	int erroffset;
-	int ovector[10000];
+	int ovector[30];
 	int rc,i;
 
 	//char buffer[128];
 	//memset(buffer,'\0',128);
-	//char src[] = "<head><title>Hello World</title>hshss<title>a</title></head>";
-	//char pattern [] = "<title>(.*)</title>";
+	char src[] = "<head><title>Hello World</title>hshss<title>a</title></head>";
+	char pattern [] = "<title>(.*)</title>";
 	
-	char *src;
-	FILE *fp;
-	fp = fopen("1.log","r");
-	fseek( fp , 0 , SEEK_END );
-	int file_size;
-	file_size = ftell( fp );
-	fseek( fp , 0 , SEEK_SET);
-	src =  (char *)malloc( file_size * sizeof( char ) );
-	fread( src , file_size , sizeof(char) , fp);
+	//char *src;
+	//FILE *fp;
+	//fp = fopen("1.log","r");
+	//fseek( fp , 0 , SEEK_END );
+	//int file_size;
+	//file_size = ftell( fp );
+	//fseek( fp , 0 , SEEK_SET);
+	//src =  (char *)malloc( file_size * sizeof( char ) );
+	//fread( src , file_size , sizeof(char) , fp);
 
-//	printf("String : %s\n",src);
-//	printf("Pattern : %s\n",pattern);
+	printf("String : %s\n",src);
+	printf("Pattern : %s\n",pattern);
 
-	char pattern[] = "\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.    \\w{2,3})+";
+	//char pattern[] = "\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.    \\w{2,3})+";
 
-	re = pcre_compile(pattern,PCRE_CASELESS|PCRE_DOTALL|PCRE_MULTILINE,&error,&erroffset,NULL);
+	re = pcre_compile(pattern,0,&error,&erroffset,NULL);
 	if(NULL == re){
 		printf("PCRE compilation failed at offset %d: %s\n",erroffset,error);
 		return 1;
@@ -65,9 +65,9 @@ int main()
 		printf("%2d: %.*s\n", i, substring_length, substring_start);
 	}
 
-	fclose(fp);
+//	fclose(fp);
 	free(re);
 
-	printf("This is a pcre testing code.\n");
+	//printf("This is a pcre testing code.\n");
 	return 0;
 }

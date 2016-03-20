@@ -14,8 +14,10 @@ int main()
     int  erroffset;
     int  ovector[OVECCOUNT];
     int  rc, i,options;
-    char  src [] = "111 <title>Hello the  World</title> 222";   // 要被用来匹配的字符串
-    char  pattern [] = "(t|H)h(o|eir|ose)";              // 将要被编译的字符串形式的正则表达式
+    //char  src [] = "111 <title>Hello the  World</title> 222";   // 要被用来匹配的字符串
+    char  src [] = "<head><title>Hello World</title>hshss<title>a</title></head>";   // 要被用来匹配的字符串
+    char  pattern [] = "<title>(.*)</title>";              // 将要被编译的字符串形式的正则表达式
+    //char  pattern [] = "(t|H)h(o|eir|ose)";              // 将要被编译的字符串形式的正则表达式
     printf("String : %s\n", src);
     printf("Pattern: \"%s\"\n", pattern);
     re = pcre_compile(pattern,       // pattern, 输入参数，将要被编译的字符串形式的正则表达式
@@ -58,6 +60,7 @@ int main()
         int substring_length = ovector[2*i+1] - ovector[2*i];
         printf("$%2d: %.*s\n", i, substring_length, substring_start);
     }
+	printf("v(1)=%d\n",ovector[1]);
     pcre_free(re);                     // 编译正则表达式re 释放内存
     return 0;
 }
