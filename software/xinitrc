@@ -1,0 +1,13 @@
+#!/bin/sh 
+eval `dbus-launch --sh-syntax --exit-with-session`
+export LANG=zh_CN.UTF-8
+export XIM=fcitx
+export XMODIFIERS='@im=fcitx'
+export XIM_PROGRAM=fcitx
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+fcitx &
+#exec enlightenment_start
+
+xrdb -load ~/.Xresources
+dwm

@@ -1,0 +1,60 @@
+! vim:set nospell:
+
+! Author: Tiwei Bie (btw@mail.ustc.edu.cn)
+! Created: Thu Aug 23 17:44:16 CST 2012
+! Modified: Sun Feb  2 10:00:39 CST 2014
+! Modified: Fri Jun  5 08:34:57 CST 2015
+! Description: xrdb /path/to/Xresources
+!
+
+xterm.termName: xterm-256color
+XTerm*saveLines: 65535
+xterm*scrollBar: false
+xterm*loginshell: true
+xterm*borderLess: true
+xterm*cursorBlink: true
+xterm*cursorOnTime: 900
+xterm*cursorOffTime: 450
+!xterm*cursorUnderLine: true
+xterm*boldMode: false
+xterm*colorBDMode: true
+xterm*faceName: Consolas:antialias=True:pixelsize=17
+xterm*boldFont: Consolas:antialias=True:pixelsize=17
+xterm*faceNameDoublesize: WenQuanYi Micro Hei Mono:antialias=True:pixelsize=18
+XTerm*highlightSelection: true
+xterm*colorUL: yellow
+xterm*colorBD: white
+xterm*eightBitInput: false
+xterm*altSendsEscape: true
+xterm*locale: true
+xterm.utf8: true
+xterm*utf8Title: true
+xterm*fontMenu*fontdefault*Label: Default
+xterm*xftAntialias: true
+xterm.cjkWidth: false
+XTerm*preeditType: Root
+
+XTerm*VT100.Translations: #override \
+    Shift Ctrl <KeyPress> V: insert-selection(CLIPBOARD,PRIMARY,CUT_BUFFER0) \n\
+    <BtnUp>: select-end(CLIPBOARD,PRIMARY,CUT_BUFFER0) \n
+    Shift Ctrl <KeyPress> P: print() \n
+
+xterm*background: #121212
+xterm*foreground: #508284
+xterm*color0:  #2e3436
+xterm*color8:  #555753
+xterm*color1:  #cc0000
+xterm*color9:  #ef2929
+xterm*color2:  #4e9a06
+xterm*color10: #53b206
+xterm*color3:  #c4a000
+xterm*color11: #fce94f
+xterm*color4:  #3465a4
+xterm*color12: #729fcf
+xterm*color5:  #75507b
+xterm*color13: #ad7fa8
+xterm*color6:  #0b939b
+xterm*color14: #00f5e9
+xterm*color7:  #d3d7cf
+xterm*color15: #eeeeec
+
