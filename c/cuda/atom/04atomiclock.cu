@@ -8,16 +8,22 @@
 #include <stdio.h>
 #include <cuda_runtime.h>
 
-const int gridSize=1,blockSize=10;
+const int gridSize=7,blockSize=1;
 cudaError_t addWithCuda(int *sum);
 
 __global__ void addKernel(int *sum)
 {
-	int i = blockIdx.x * blockDim.x + threadIdx.x+1;
-	//*sum = *sum + i;
-	
+	int i = blockIdx.x*blockDim.x +threadIdx.x;
+	int j=0;
+	int tsum = 1;
+	//atomicAdd(sum,i);
+	//tsum = *tsum + i;
+	//atomicCAS(sum,tsum,*sum);
+	for(j=0;j<i;j++)
+		tsum *=10; 
+	for(j=0;j<tsum;j++);
 	atomicAdd(sum,i);
-	printf("thread %d:sum=%d\n",i,*sum);
+	printf("thread %d:tsum=%d,sum=%d\n",i,tsum,*sum);
 }
 
 int main()

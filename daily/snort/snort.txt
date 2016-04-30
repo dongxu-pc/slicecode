@@ -1,0 +1,42 @@
+
+1.在snort.c文件中有main函数，其调用了SnortMain()函数，在snortMain()中使用SnortInit实现了snort环境的初始化，使用DAQ_Start()实现了网络I/O的初始化，使用PacketLoop()实现对接收到的报文进行处理。
+
+2.SnortInit:
+	使用InitSignals初始化信号量
+	使用InitGlobal申请PacketCount内存，初始化netmask和协议名
+	使用ParseCmdLine，解析命令行(选项及参数)，包括建立snortConfig,以及其初始化，设置run_mode
+	使用init_fileAPI，初始化文件处接口
+	使用RegisterPreprocessors注册预处理器选项
+	使用RegisterRuleOptions注册初始化rule规则选项，注意setup的作用
+
+	使用ParseSnortConf，解析rule file
+	使用ConfigureOutputPlugins，配置输出插件
+
+	使用ParseRules,对rule chains进行初始化
+	使用fpCreateFastPacketDetection，生成fast匹配树
+
+
+3.ParseSnortConf
+	使用CreateRuleType，创建一种新的rule类型并将其添加到rule list（sc->rule_list）的尾部
+	使用PortTableNew()->PortObjectNew()来创建port table（sc->port_tables）
+	使用mpseInitSummary()，初始话mpse
+	使用OtnInit(),来初始化otn hash
+	使用ParseConfigFile,对config文件进行读取，分析各个policy
+
+4.PacketLoop是处理的主要循环，其对每一个接收到的报文进行处理
+	使用DAQ_Acquire调用DAQ模块获取报文,并对每一个报文应用rule进行处理,函数调用顺序，如下
+	PacketCallback->ProcessPacket->Preprocess->Detect->fpEvalpacket->fpEvalHeaderTcp(packet,omd)->fpEvalHeaderSW()->mpseSearch(rule_tree_match)->bnfaSearch(rule_tree_match)->_bnfa_search_csparse_nfa(rule_tree_match)->Math:rule_tree_match->detection_option_tree_evaluate()->detection_option_node_evaluate()
+
+
+SetupPluginName()<-RegisterRuleOptions()<-SnortInit()
+	->SnortPcreInit(otn)->AddOptFuncToList(SnortPcre,otn)->(otn->opt_func->OptTestFunc***SnortPcre)
+
+	在RegisterRuleOption中，我们的插件初始化函数如SnortPcreInit被添加到函数链rule_opt_config_funcs中，之后在
+ParseRuleOptions()中使用dopt->func()来引用plugin初始化函数（SnortPcreInit）将其添加在otn中；
+	在AddOptFuncToList中，我们将插件处理函数（SnortPcre）添加再otn的opt_func链表中；
+	在otn_create_tree(otn,existing_tree)中，将otn中的opt_func函数链提取出来依次添加到树existing<detection_option_tree_node_t>中,这棵树的结构你研究一下，看一下具体是哪一种树。
+
+	这是生成树的函数调用链，代码有点多，你参看一下SnortInit()->fpCreateFastPacketDetection()->fpCreatePortGroups()->fpCreatePortTablePortGroups->fpCreatePortObject2PortGroup->fpAddPortGroupRule->fpFinishPortGroup()->otn_create_tree()
+
+	我这里现在没有代码分析的详细记录，我当时没有分析的特别详细，你先按照我给你列出的函数链看下去，过两天如果不懂我再给你详细的看一下。
+	祝好！
